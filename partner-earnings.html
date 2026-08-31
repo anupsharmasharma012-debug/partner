@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityPulse Partner - Earnings</title>
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --cp-blue: #3b82f6;
+            --cp-green: #10b981;
+            --cp-orange: #f59e0b;
+            --card-border: rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); }
+        .max-width-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg-light); box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+
+        /* Header */
+        .partner-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px 16px; color: white; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: sticky; top: 0; z-index: 100; }
+        .back-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0; margin-right: 10px; }
+        
+        /* Balance Card */
+        .balance-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; padding: 20px; color: white; margin-top: 16px; box-shadow: 0 10px 20px rgba(16,185,129,0.2); position: relative; overflow: hidden; }
+        .balance-card::after { content: '₹'; position: absolute; right: -10px; bottom: -20px; font-size: 100px; opacity: 0.1; font-weight: 900; }
+        .b-label { font-size: 12px; font-weight: 700; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+        .b-amount { font-size: 32px; font-weight: 900; margin: 8px 0; }
+        .withdraw-btn { background: white; color: var(--cp-green); border: none; padding: 10px 20px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Stats Row */
+        .stats-row { display: flex; gap: 12px; margin: 16px; }
+        .s-box { flex: 1; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border); }
+        .s-label { font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; }
+        .s-val { font-size: 16px; font-weight: 900; color: var(--text-main); margin-top: 6px; }
+
+        /* History */
+        .section-title { font-size: 13px; font-weight: 800; padding: 0 16px; margin: 20px 0 10px 0; color: var(--text-main); }
+        .tx-list { padding: 0 16px 90px 16px; display: flex; flex-direction: column; gap: 10px; }
+        .tx-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .tx-info { display: flex; gap: 12px; align-items: center; }
+        .tx-icon { width: 36px; height: 36px; background: rgba(59,130,246,0.1); color: var(--cp-blue); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 16px; }
+        .tx-title { font-size: 12px; font-weight: 800; color: var(--text-main); }
+        .tx-date { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+        .tx-amt { font-size: 14px; font-weight: 900; color: var(--cp-green); }
+        .tx-amt.debit { color: var(--text-main); }
+
+        /* Bottom Nav */
+        .partner-bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 12px 0 20px 0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); cursor: pointer; text-decoration: none; }
+        .nav-item.active { color: var(--cp-blue); }
+        .nav-icon { font-size: 20px; }
+        .nav-label { font-size: 10px; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="max-width-container">
+        
+        <div class="partner-header">
+            <div style="display: flex; align-items: center;">
+                <button class="back-btn" onclick="window.location.href='partner-home.html'">←</button>
+                <div style="font-size: 16px; font-weight: 800;">Earnings & Payouts</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="b-label">Available for Withdrawal</div>
+                <div class="b-amount">₹4,250.00</div>
+                <button class="withdraw-btn" onclick="alert('Withdrawal Request Sent to Bank ending in x4092')">Withdraw to Bank</button>
+            </div>
+        </div>
+
+        <main>
+            <div class="stats-row">
+                <div class="s-box">
+                    <div class="s-label">Today's Sales</div>
+                    <div class="s-val">₹1,850</div>
+                </div>
+                <div class="s-box">
+                    <div class="s-label">Pending Settled</div>
+                    <div class="s-val" style="color: var(--cp-orange);">₹320</div>
+                </div>
+            </div>
+
+            <div class="section-title">Recent Transactions</div>
+            <div class="tx-list">
+                
+                <div class="tx-card">
+                    <div class="tx-info">
+                        <div class="tx-icon">📦</div>
+                        <div>
+                            <div class="tx-title">Order #ORD-8815</div>
+                            <div class="tx-date">Today, 02:45 PM</div>
+                        </div>
+                    </div>
+                    <div class="tx-amt">+₹450</div>
+                </div>
+
+                <div class="tx-card">
+                    <div class="tx-info">
+                        <div class="tx-icon">📦</div>
+                        <div>
+                            <div class="tx-title">Order #ORD-8790</div>
+                            <div class="tx-date">Today, 11:30 AM</div>
+                        </div>
+                    </div>
+                    <div class="tx-amt">+₹120</div>
+                </div>
+
+                <div class="tx-card">
+                    <div class="tx-info">
+                        <div class="tx-icon" style="background: rgba(16,185,129,0.1); color: var(--cp-green);">🏦</div>
+                        <div>
+                            <div class="tx-title">Bank Withdrawal</div>
+                            <div class="tx-date">Yesterday, 09:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="tx-amt debit">-₹2,500</div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Partner Bottom Nav -->
+        <div class="partner-bottom-nav">
+            <a href="partner-home.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <a href="partner-orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span class="nav-label">Orders</span>
+            </a>
+            <a href="partner-stock.html" class="nav-item">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Inventory</span>
+            </a>
+            <div class="nav-item active">
+                <span class="nav-icon">💸</span>
+                <span class="nav-label">Earnings</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
