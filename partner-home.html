@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityPulse Partner - Dashboard</title>
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --cp-blue: #3b82f6;
+            --cp-green: #10b981;
+            --cp-red: #ef4444;
+            --cp-orange: #f59e0b;
+            --card-border: rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); }
+        .max-width-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg-light); box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+
+        /* Top Header */
+        .partner-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px 16px; color: white; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .merchant-info { display: flex; flex-direction: column; }
+        .m-name { font-size: 16px; font-weight: 800; }
+        .m-type { font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 2px; }
+
+        /* Online / Offline Toggle */
+        .duty-toggle-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cp-green); box-shadow: 0 0 8px var(--cp-green); }
+        .status-text { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        
+        .toggle-switch { position: relative; width: 36px; height: 20px; background: var(--cp-green); border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 18px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch.offline { background: var(--text-muted); }
+        .toggle-switch.offline::after { left: 2px; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
+        .stat-card { background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .stat-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 20px; font-weight: 900; color: var(--text-main); margin-top: 8px; }
+        
+        /* Incoming Order Alert (Live) */
+        .section-title { font-size: 13px; font-weight: 800; padding: 0 16px; margin: 10px 0; color: var(--text-main); }
+        .incoming-alert { background: #fffbeb; border: 1px solid #fde68a; border-radius: 16px; margin: 0 16px 16px 16px; padding: 16px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(245,158,11,0.1); }
+        .pulse-ring { position: absolute; top: -10px; right: -10px; width: 50px; height: 50px; border-radius: 50%; background: rgba(245,158,11,0.2); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        
+        .alert-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 10px; }
+        .order-id { font-size: 12px; font-weight: 800; color: var(--cp-orange); }
+        .order-time { font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        
+        .item-list { font-size: 13px; font-weight: 700; line-height: 1.5; color: var(--text-main); }
+        .delivery-type { display: inline-block; background: rgba(16,185,129,0.1); color: var(--cp-green); font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; margin-top: 8px; }
+
+        .action-buttons { display: flex; gap: 10px; margin-top: 16px; }
+        .btn-reject { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--cp-red); background: transparent; color: var(--cp-red); font-weight: 800; font-size: 13px; cursor: pointer; }
+        .btn-accept { flex: 2; padding: 12px; border-radius: 12px; border: none; background: var(--cp-green); color: white; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(16,185,129,0.2); }
+
+        /* Bottom Nav */
+        .partner-bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 12px 0 20px 0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); cursor: pointer; }
+        .nav-item.active { color: var(--cp-blue); }
+        .nav-icon { font-size: 20px; }
+        .nav-label { font-size: 10px; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="max-width-container">
+        
+        <!-- Header & Duty Toggle -->
+        <div class="partner-header">
+            <div class="merchant-info">
+                <div class="m-name">Gupta Sweets & Snacks</div>
+                <div class="m-type">📍 Ward 12, Bhatpara • Grocery & Food</div>
+            </div>
+            <div class="duty-toggle-box" id="dutyBox" onclick="toggleDuty()">
+                <div class="status-dot" id="statusDot"></div>
+                <div class="status-text" id="statusText">ONLINE</div>
+                <div class="toggle-switch" id="toggleSwitch"></div>
+            </div>
+        </div>
+
+        <main style="padding-bottom: 90px;">
+            <!-- Live Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Today's Sales</div>
+                    <div class="stat-value">₹4,250</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Pending Orders</div>
+                    <div class="stat-value" style="color: var(--cp-orange);">3</div>
+                </div>
+            </div>
+
+            <!-- Incoming Order Alert -->
+            <div class="section-title">🚨 Action Required</div>
+            
+            <div class="incoming-alert" id="newOrderAlert">
+                <div class="pulse-ring"></div>
+                <div class="alert-header">
+                    <div class="order-id">#ORD-8821 (New)</div>
+                    <div class="order-time">Just Now</div>
+                </div>
+                <div class="item-list">
+                    1x Amul Taaza Milk (1L)<br>
+                    2x Haldiram Bhujia (400g)
+                </div>
+                <div class="delivery-type">⚡ 15-Min Local Express</div>
+                
+                <div class="action-buttons">
+                    <button class="btn-reject" onclick="handleOrder('reject')">Reject</button>
+                    <button class="btn-accept" onclick="handleOrder('accept')">Accept Order</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Partner Bottom Nav -->
+        <div class="partner-bottom-nav">
+            <div class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span class="nav-label">Orders</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Inventory</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">💸</span>
+                <span class="nav-label">Earnings</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isOnline = true;
+
+        function toggleDuty() {
+            isOnline = !isOnline;
+            const toggle = document.getElementById('toggleSwitch');
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            if(isOnline) {
+                toggle.classList.remove('offline');
+                dot.style.background = 'var(--cp-green)';
+                dot.style.boxShadow = '0 0 8px var(--cp-green)';
+                text.innerText = 'ONLINE';
+                text.style.color = 'white';
+            } else {
+                toggle.classList.add('offline');
+                dot.style.background = 'var(--text-muted)';
+                dot.style.boxShadow = 'none';
+                text.innerText = 'OFFLINE';
+                text.style.color = 'var(--text-muted)';
+            }
+        }
+
+        function handleOrder(action) {
+            if(action === 'accept') {
+                alert('Order Accepted! Move to Orders tab to process.');
+            } else {
+                alert('Order Rejected. Passed to next nearest vendor.');
+            }
+            document.getElementById('newOrderAlert').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
