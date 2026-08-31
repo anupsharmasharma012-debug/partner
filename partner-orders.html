@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityPulse Partner - Order Manager</title>
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --cp-blue: #3b82f6;
+            --cp-green: #10b981;
+            --cp-orange: #f59e0b;
+            --card-border: rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); }
+        .max-width-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg-light); box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+
+        /* Header */
+        .partner-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px 16px; color: white; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0; }
+        .header-title { font-size: 16px; font-weight: 800; }
+
+        /* Tabs */
+        .tabs-container { display: flex; background: var(--card-bg); border-bottom: 1px solid var(--card-border); position: sticky; top: 62px; z-index: 99; }
+        .tab { flex: 1; text-align: center; padding: 14px 0; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .tab.active { color: var(--cp-blue); border-bottom-color: var(--cp-blue); background: rgba(59,130,246,0.05); }
+        .tab-count { background: var(--cp-orange); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-left: 4px; }
+
+        /* Order List & Cards */
+        .order-section { display: none; padding: 16px; padding-bottom: 90px; }
+        .order-section.active { display: block; }
+
+        .order-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px; }
+        .o-id { font-size: 14px; font-weight: 900; color: var(--text-main); }
+        .o-time { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 4px; }
+        .o-amount { font-size: 16px; font-weight: 900; color: var(--cp-green); }
+
+        .customer-info { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; background: var(--bg-light); padding: 10px; border-radius: 10px; }
+        .c-icon { font-size: 24px; }
+        .c-details { flex: 1; }
+        .c-name { font-size: 12px; font-weight: 800; }
+        .c-address { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+        .call-btn { background: rgba(59,130,246,0.1); color: var(--cp-blue); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; cursor: pointer; }
+
+        .item-list { font-size: 12px; font-weight: 700; line-height: 1.6; color: var(--text-main); margin-bottom: 12px; }
+        
+        .delivery-tag { display: inline-block; background: rgba(16,185,129,0.1); color: var(--cp-green); font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; margin-bottom: 16px; }
+
+        .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--cp-blue); color: white; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(59,130,246,0.2); }
+        .action-btn.green { background: var(--cp-green); box-shadow: 0 4px 10px rgba(16,185,129,0.2); }
+
+        /* Bottom Nav */
+        .partner-bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 12px 0 20px 0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); cursor: pointer; text-decoration: none; }
+        .nav-item.active { color: var(--cp-blue); }
+        .nav-icon { font-size: 20px; }
+        .nav-label { font-size: 10px; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="max-width-container">
+        
+        <div class="partner-header">
+            <button class="back-btn" onclick="window.location.href='partner-home.html'">←</button>
+            <div class="header-title">Order Management</div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tab active" onclick="switchTab('new', this)">New <span class="tab-count">2</span></div>
+            <div class="tab" onclick="switchTab('processing', this)">Processing</div>
+            <div class="tab" onclick="switchTab('completed', this)">Completed</div>
+        </div>
+
+        <main>
+            <!-- 1. NEW ORDERS TAB -->
+            <div id="tab-new" class="order-section active">
+                <div class="order-card" id="order-8821">
+                    <div class="order-header">
+                        <div>
+                            <div class="o-id">#ORD-8821</div>
+                            <div class="o-time">Today, 03:15 PM</div>
+                        </div>
+                        <div class="o-amount">₹290</div>
+                    </div>
+                    
+                    <div class="customer-info">
+                        <div class="c-icon">👤</div>
+                        <div class="c-details">
+                            <div class="c-name">Rahul Sharma</div>
+                            <div class="c-address">Ward 12, Bhatpara (600m away)</div>
+                        </div>
+                        <button class="call-btn" onclick="alert('Calling Customer...')">📞</button>
+                    </div>
+
+                    <div class="delivery-tag">⚡ 15-Min Local Express</div>
+
+                    <div class="item-list">
+                        2x Amul Taaza Milk (1L)<br>
+                        1x Aashirvaad Atta (1kg)
+                    </div>
+
+                    <button class="action-btn" onclick="updateOrderStatus('order-8821', 'Mark as Packed')">Mark as Packed</button>
+                </div>
+            </div>
+
+            <!-- 2. PROCESSING TAB -->
+            <div id="tab-processing" class="order-section">
+                <div class="order-card" id="order-8815">
+                    <div class="order-header">
+                        <div>
+                            <div class="o-id">#ORD-8815</div>
+                            <div class="o-time">Today, 02:45 PM</div>
+                        </div>
+                        <div class="o-amount">₹450</div>
+                    </div>
+                    
+                    <div class="customer-info">
+                        <div class="c-icon">👤</div>
+                        <div class="c-details">
+                            <div class="c-name">Priya Singh</div>
+                            <div class="c-address">Kankinara, Ward 8 (2.5km away)</div>
+                        </div>
+                        <button class="call-btn">📞</button>
+                    </div>
+
+                    <div class="delivery-tag" style="background: rgba(59,130,246,0.1); color: var(--cp-blue);">🚚 Standard Local</div>
+
+                    <div class="item-list">
+                        1x Fortune Soyabean Oil (1L)<br>
+                        2x Maggi Family Pack
+                    </div>
+
+                    <button class="action-btn green" onclick="updateOrderStatus('order-8815', 'Hand over to Rider')">Ready / Hand over to Rider</button>
+                </div>
+            </div>
+
+            <!-- 3. COMPLETED TAB -->
+            <div id="tab-completed" class="order-section">
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="o-id">#ORD-8790</div>
+                            <div class="o-time">Today, 11:30 AM</div>
+                        </div>
+                        <div class="o-amount" style="color: var(--text-muted);">₹120</div>
+                    </div>
+                    <div class="item-list" style="color: var(--text-muted);">1x Electrician Visit Charge (Base)</div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--cp-green);">✅ Delivered & Settled</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Partner Bottom Nav -->
+        <div class="partner-bottom-nav">
+            <a href="partner-home.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <div class="nav-item active">
+                <span class="nav-icon">📦</span>
+                <span class="nav-label">Orders</span>
+            </div>
+            <a href="partner-stock.html" class="nav-item">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Inventory</span>
+            </a>
+            <div class="nav-item">
+                <span class="nav-icon">💸</span>
+                <span class="nav-label">Earnings</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.order-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function updateOrderStatus(orderId, actionText) {
+            alert(`Order ${orderId} status updated successfully!`);
+            document.getElementById(orderId).style.opacity = '0.5';
+            document.getElementById(orderId).style.pointerEvents = 'none';
+        }
+    </script>
+</body>
+</html>
+
