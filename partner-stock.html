@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityPulse Partner - Inventory Manager</title>
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --cp-blue: #3b82f6;
+            --cp-green: #10b981;
+            --cp-red: #ef4444;
+            --card-border: rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--bg-light); color: var(--text-main); }
+        .max-width-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg-light); box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+
+        /* Header */
+        .partner-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px 16px; color: white; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .back-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0; }
+        .header-title { font-size: 16px; font-weight: 800; }
+        
+        /* Add Button */
+        .add-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; gap: 4px; align-items: center; }
+
+        /* Search Bar */
+        .search-box { background: var(--card-bg); padding: 12px 16px; border-bottom: 1px solid var(--card-border); position: sticky; top: 62px; z-index: 99; }
+        .search-input { width: 100%; background: var(--bg-light); border: 1px solid rgba(0,0,0,0.1); padding: 10px 14px; border-radius: 10px; font-size: 13px; outline: none; }
+
+        /* Item List */
+        .inventory-list { padding: 16px; padding-bottom: 90px; display: flex; flex-direction: column; gap: 12px; }
+        
+        .item-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .item-card.out-of-stock { opacity: 0.6; }
+        
+        .item-icon { width: 48px; height: 48px; background: rgba(59,130,246,0.1); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 24px; }
+        .item-details { flex: 1; }
+        .item-name { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+        .item-price { font-size: 14px; font-weight: 900; color: var(--cp-green); }
+        .item-mrp { font-size: 10px; text-decoration: line-through; color: var(--text-muted); margin-left: 4px; }
+
+        /* Controls (Toggle & Edit) */
+        .item-controls { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        
+        .toggle-switch { position: relative; width: 34px; height: 18px; background: var(--cp-green); border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 16px; width: 14px; height: 14px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .out-of-stock .toggle-switch { background: var(--text-muted); }
+        .out-of-stock .toggle-switch::after { left: 2px; }
+
+        .edit-btn { background: transparent; border: 1px solid var(--cp-blue); color: var(--cp-blue); font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+
+        /* Bottom Nav */
+        .partner-bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; padding: 12px 0 20px 0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); cursor: pointer; text-decoration: none; }
+        .nav-item.active { color: var(--cp-blue); }
+        .nav-icon { font-size: 20px; }
+        .nav-label { font-size: 10px; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="max-width-container">
+        
+        <!-- Header -->
+        <div class="partner-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='partner-home.html'">←</button>
+                <div class="header-title">Inventory Manager</div>
+            </div>
+            <button class="add-btn" onclick="alert('Open Add Item Form')">+ Add Item</button>
+        </div>
+
+        <!-- Search / Filter -->
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search products in your shop...">
+        </div>
+
+        <main class="inventory-list">
+            
+            <!-- Item 1 (In Stock) -->
+            <div class="item-card" id="item-1">
+                <div class="item-icon">🥛</div>
+                <div class="item-details">
+                    <div class="item-name">Amul Taaza Milk (1L)</div>
+                    <div>
+                        <span class="item-price">₹72</span>
+                        <span class="item-mrp">₹75</span>
+                    </div>
+                </div>
+                <div class="item-controls">
+                    <div class="toggle-switch" onclick="toggleStock('item-1')"></div>
+                    <button class="edit-btn" onclick="alert('Edit Price Details')">Edit Price</button>
+                </div>
+            </div>
+
+            <!-- Item 2 (In Stock) -->
+            <div class="item-card" id="item-2">
+                <div class="item-icon" style="background: rgba(245,158,11,0.1);">🌾</div>
+                <div class="item-details">
+                    <div class="item-name">Aashirvaad Atta (5kg)</div>
+                    <div>
+                        <span class="item-price">₹245</span>
+                        <span class="item-mrp">₹260</span>
+                    </div>
+                </div>
+                <div class="item-controls">
+                    <div class="toggle-switch" onclick="toggleStock('item-2')"></div>
+                    <button class="edit-btn" onclick="alert('Edit Price Details')">Edit Price</button>
+                </div>
+            </div>
+
+            <!-- Item 3 (Out of Stock) -->
+            <div class="item-card out-of-stock" id="item-3">
+                <div class="item-icon" style="background: rgba(239,68,68,0.1);">🍅</div>
+                <div class="item-details">
+                    <div class="item-name">Fresh Tomato (1kg)</div>
+                    <div>
+                        <span class="item-price">₹40</span>
+                    </div>
+                    <div style="font-size: 10px; color: var(--cp-red); font-weight: 800; margin-top: 4px;">Out of Stock</div>
+                </div>
+                <div class="item-controls">
+                    <div class="toggle-switch" onclick="toggleStock('item-3')"></div>
+                    <button class="edit-btn" onclick="alert('Edit Price Details')">Edit Price</button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Partner Bottom Nav -->
+        <div class="partner-bottom-nav">
+            <a href="partner-home.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <a href="partner-orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span class="nav-label">Orders</span>
+            </a>
+            <div class="nav-item active">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Inventory</span>
+            </div>
+            <div class="nav-item" onclick="alert('Earnings module next!')">
+                <span class="nav-icon">💸</span>
+                <span class="nav-label">Earnings</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleStock(itemId) {
+            const card = document.getElementById(itemId);
+            if (card.classList.contains('out-of-stock')) {
+                card.classList.remove('out-of-stock');
+                // Remove the "Out of Stock" text element if it exists
+                const alertText = card.querySelector('[style*="color: var(--cp-red)"]');
+                if(alertText) alertText.remove();
+            } else {
+                card.classList.add('out-of-stock');
+            }
+        }
+    </script>
+</body>
+</html>
